@@ -1,0 +1,25 @@
+name: Despertador Automatico Streamlit
+
+on:
+  schedule:
+    # Se ejecuta de forma automatica cada 10 horas (en formato Cron)
+    - cron: '0 */10 * * *'
+  workflow_dispatch: # Te permite activar el despertador manualmente desde GitHub si quieres
+
+jobs:
+  ping-app:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout del codigo
+        uses: actions/checkout@v4
+
+      - name: Simular micro-actividad
+        run: |
+          echo "Ultimo pulso de actividad: $(date)" > ping.txt
+
+      - name: Registrar cambios en GitHub
+        run: |
+          git config --global user.name "GitHub Action Despertador"
+          git config --global user.email "action@github.com"
+          git add ping.txt
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Pulso automatico para mantener viva la app" && git push)
